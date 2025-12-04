@@ -10,6 +10,7 @@
 
 html {
 	scroll-behavior: smooth;
+	scroll-padding-top: 80px;
 }
 
 body {
@@ -18,10 +19,51 @@ body {
 		"Helvetica Neue", sans-serif;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
+	background: #000;
 }
 
 @layer components {
 	.container-custom {
 		@apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
 	}
+}
+
+/* Smooth animations */
+@keyframes fadeInUp {
+	from {
+		opacity: 0;
+		transform: translateY(20px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@keyframes float {
+	0%,
+	100% {
+		transform: translateY(0px);
+	}
+	50% {
+		transform: translateY(-20px);
+	}
+}
+
+/* Smooth scrollbar */
+::-webkit-scrollbar {
+	width: 10px;
+}
+
+::-webkit-scrollbar-track {
+	background: #000;
+}
+
+::-webkit-scrollbar-thumb {
+	background: #1e40af;
+	border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+	background: #1e3a8a;
 }
