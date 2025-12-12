@@ -1,18 +1,200 @@
+"use client";
+
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import { ProjectModal } from "@/components/ProjectModal";
+
+interface BlobPosition {
+	top?: number;
+	left?: number;
+	right?: number;
+}
+
+interface Project {
+	id: string;
+	title: string;
+	description: string;
+	fullDescription: string;
+	tags: string[];
+	gradient: string;
+	imageUrl?: string;
+	demoUrl?: string;
+	repoUrl?: string;
+}
 
 export default function Home() {
+	const [blob1Position, setBlob1Position] = useState<BlobPosition>({
+		top: 10,
+		left: 10,
+	});
+	const [blob2Position, setBlob2Position] = useState<BlobPosition>({
+		top: 15,
+		right: 0,
+	});
+	const [blob3Position, setBlob3Position] = useState<BlobPosition>({
+		top: 50,
+		left: 45,
+	});
+	const [selectedProject, setSelectedProject] = useState<Project | null>(
+		null
+	);
+
+	const projects: Project[] = [
+		{
+			id: "1",
+			title: "Project One",
+			description:
+				"A beautiful web application built with modern technologies",
+			fullDescription:
+				"This is a comprehensive web application showcasing modern development practices. Built with React and TypeScript, it features a responsive design with beautiful UI components. The application demonstrates best practices in state management, component architecture, and performance optimization.",
+			tags: ["React", "TypeScript", "Tailwind"],
+			gradient: "from-blue-500 to-cyan-500",
+			demoUrl: "https://example.com",
+			repoUrl: "https://github.com/isaacschiffler",
+		},
+		{
+			id: "2",
+			title: "Project Two",
+			description: "Full-stack application with backend and database",
+			fullDescription:
+				"A full-stack application that demonstrates the complete development lifecycle. Features a robust backend API built with Node.js, a PostgreSQL database, and a modern frontend. Includes authentication, real-time updates, and comprehensive error handling.",
+			tags: ["Next.js", "Node.js", "PostgreSQL"],
+			gradient: "from-purple-500 to-pink-500",
+			demoUrl: "https://example.com",
+			repoUrl: "https://github.com/isaacschiffler",
+		},
+		{
+			id: "3",
+			title: "Project Three",
+			description: "Real-time application with live updates",
+			fullDescription:
+				"A real-time collaborative application using Firebase for instant data synchronization. Features live notifications, collaborative editing, and a polished user experience. Demonstrates advanced React patterns and performance optimization techniques.",
+			tags: ["React", "Firebase", "Tailwind"],
+			gradient: "from-green-500 to-emerald-500",
+			demoUrl: "https://example.com",
+			repoUrl: "https://github.com/isaacschiffler",
+		},
+	];
+
+	useEffect(() => {
+		// Target positions for smooth interpolation
+		let targetBlob1 = {
+			top: blob1Position.top ?? 0,
+			left: blob1Position.left ?? 0,
+		};
+		let targetBlob2 = {
+			top: blob2Position.top ?? 0,
+			right: blob2Position.right ?? 0,
+		};
+		let targetBlob3 = {
+			top: blob3Position.top ?? 0,
+			left: blob3Position.left ?? 0,
+		};
+
+		// Clamp function to keep values within bounds
+		const clamp = (value: number, min: number, max: number) => {
+			return Math.min(Math.max(value, min), max);
+		};
+
+		// Generate new random targets every 5 seconds with small offset
+		const generateNewTargets = () => {
+			// Small random offset from current target (±10% of viewport)
+			targetBlob1 = {
+				top: clamp(
+					(targetBlob1.top ?? 0) + (Math.random() - 0.5) * 5,
+					-30,
+					60
+				),
+				left: clamp(
+					(targetBlob1.left ?? 0) + (Math.random() - 0.5) * 5,
+					-30,
+					80
+				),
+			};
+			targetBlob2 = {
+				top: clamp(
+					(targetBlob2.top ?? 0) + (Math.random() - 0.5) * 5,
+					-30,
+					60
+				),
+				right: clamp(
+					(targetBlob2.right ?? 0) + (Math.random() - 0.5) * 5,
+					-30,
+					80
+				),
+			};
+			targetBlob3 = {
+				top: clamp(
+					(targetBlob3.top ?? 0) + (Math.random() - 0.5) * 5,
+					-30,
+					80
+				),
+				left: clamp(
+					(targetBlob3.left ?? 0) + (Math.random() - 0.5) * 5,
+					-30,
+					80
+				),
+			};
+		};
+
+		// Set initial random targets
+		generateNewTargets();
+		const targetInterval = setInterval(generateNewTargets, 150);
+
+		// Smooth animation loop using requestAnimationFrame
+		let animationFrameId: number;
+
+		const animate = () => {
+			setBlob1Position((prev) => ({
+				top: prev.top! + (targetBlob1.top - prev.top!) * 0.01,
+				left: prev.left! + (targetBlob1.left - prev.left!) * 0.01,
+			}));
+
+			setBlob2Position((prev) => ({
+				top: prev.top! + (targetBlob2.top - prev.top!) * 0.01,
+				right: prev.right! + (targetBlob2.right - prev.right!) * 0.01,
+			}));
+
+			setBlob3Position((prev) => ({
+				top: prev.top! + (targetBlob3.top - prev.top!) * 0.01,
+				left: prev.left! + (targetBlob3.left - prev.left!) * 0.01,
+			}));
+
+			animationFrameId = requestAnimationFrame(animate);
+		};
+
+		animate();
+
+		return () => {
+			cancelAnimationFrame(animationFrameId);
+			clearInterval(targetInterval);
+		};
+	}, []);
+
 	return (
 		<div className="min-h-screen bg-black text-white overflow-hidden">
 			{/* Animated background elements */}
 			<div className="fixed inset-0 z-0">
-				<div className="absolute top-0 -left-4 w-72 h-72 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse"></div>
 				<div
-					className="absolute top-0 -right-4 w-72 h-72 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse"
-					style={{ animationDelay: "2s" }}
+					className="absolute w-72 h-72 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse"
+					style={{
+						top: `${blob1Position.top}%`,
+						left: `${blob1Position.left}%`,
+					}}
 				></div>
 				<div
-					className="absolute -bottom-8 left-20 w-72 h-72 bg-cyan-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse"
-					style={{ animationDelay: "4s" }}
+					className="absolute w-72 h-72 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse"
+					style={{
+						top: `${blob2Position.top}%`,
+						right: `${blob2Position.right}%`,
+					}}
+				></div>
+				<div
+					className="absolute w-72 h-72 bg-cyan-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse"
+					style={{
+						top: `${blob3Position.top}%`,
+						left: `${blob3Position.left}%`,
+					}}
 				></div>
 			</div>
 
@@ -79,15 +261,21 @@ export default function Home() {
 						that solve real problems.
 					</p>
 					<div className="flex gap-6 flex-wrap">
-						<button className="group bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-400 hover:to-purple-400 px-10 py-4 rounded-lg font-bold text-lg transition duration-300 transform hover:scale-105 shadow-lg shadow-blue-500/50">
+						<Link
+							href="#portfolio"
+							className="group bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-400 hover:to-purple-400 px-10 py-4 rounded-lg font-bold text-lg transition duration-300 transform hover:scale-105 shadow-lg shadow-blue-500/50 inline-block"
+						>
 							View My Work
 							<span className="inline-block ml-2 group-hover:translate-x-1 transition">
 								→
 							</span>
-						</button>
-						<button className="px-10 py-4 rounded-lg font-bold text-lg border-2 border-gray-500 hover:border-blue-400 text-gray-300 hover:text-blue-400 transition duration-300 transform hover:scale-105">
+						</Link>
+						<Link
+							href="#contact"
+							className="px-10 py-4 rounded-lg font-bold text-lg border-2 border-gray-500 hover:border-blue-400 text-gray-300 hover:text-blue-400 transition duration-300 transform hover:scale-105 inline-block"
+						>
 							Contact Me
-						</button>
+						</Link>
 					</div>
 				</div>
 			</section>
@@ -130,17 +318,18 @@ export default function Home() {
 						<div className="grid grid-cols-2 gap-4">
 							{[
 								"TypeScript",
+								"Python",
 								"React",
 								"Next.js",
 								"Node.js",
 								"Tailwind CSS",
 								"PostgreSQL",
-								"GraphQL",
-								"AWS",
+								"Azure",
 							].map((skill) => (
 								<div
 									key={skill}
 									className="group bg-gradient-to-br from-slate-800 to-slate-900 p-4 rounded-lg text-center border border-slate-700 hover:border-blue-500 transition duration-300 transform hover:scale-105 cursor-pointer"
+									style={{ cursor: "default" }}
 								>
 									<span className="text-sm font-semibold group-hover:text-blue-400 transition">
 										{skill}
@@ -165,31 +354,10 @@ export default function Home() {
 				</div>
 
 				<div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-					{[
-						{
-							title: "Project One",
-							description:
-								"A beautiful web application built with modern technologies",
-							tags: ["React", "TypeScript", "Tailwind"],
-							gradient: "from-blue-500 to-cyan-500",
-						},
-						{
-							title: "Project Two",
-							description:
-								"Full-stack application with backend and database",
-							tags: ["Next.js", "Node.js", "PostgreSQL"],
-							gradient: "from-purple-500 to-pink-500",
-						},
-						{
-							title: "Project Three",
-							description:
-								"Real-time application with live updates",
-							tags: ["React", "Firebase", "Tailwind"],
-							gradient: "from-green-500 to-emerald-500",
-						},
-					].map((project, index) => (
+					{projects.map((project) => (
 						<div
-							key={index}
+							key={project.id}
+							onClick={() => setSelectedProject(project)}
 							className="group bg-slate-800 bg-opacity-40 rounded-2xl overflow-hidden border border-slate-700 hover:border-blue-500 transition duration-300 transform hover:scale-105 hover:shadow-2xl hover:shadow-blue-500/20 backdrop-blur-sm cursor-pointer"
 						>
 							<div
@@ -217,6 +385,20 @@ export default function Home() {
 					))}
 				</div>
 			</section>
+
+			{/* Project Modal */}
+			{selectedProject && (
+				<ProjectModal
+					isOpen={selectedProject !== null}
+					onClose={() => setSelectedProject(null)}
+					title={selectedProject.title}
+					fullDescription={selectedProject.fullDescription}
+					tags={selectedProject.tags}
+					gradient={selectedProject.gradient}
+					demoUrl={selectedProject.demoUrl}
+					repoUrl={selectedProject.repoUrl}
+				/>
+			)}
 
 			{/* Contact Section */}
 			<section

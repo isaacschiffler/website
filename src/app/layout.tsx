@@ -2,9 +2,16 @@ import type { Metadata } from "next";
 import "../styles/globals.css";
 
 export const metadata: Metadata = {
-	title: "My Portfolio",
-	description: "Showcasing my projects and skills",
-	keywords: ["portfolio", "developer", "projects"],
+	title: "IS",
+	description: "Isaac Schiffler's Personal Portfolio",
+	keywords: [
+		"portfolio",
+		"developer",
+		"projects",
+		"software engineer",
+		"software",
+		"web development",
+	],
 };
 
 export default function RootLayout({
@@ -13,7 +20,7 @@ export default function RootLayout({
 	children: React.ReactNode;
 }) {
 	return (
-		<html lang="en">
+		<html lang="en" className="scrollbar-hide">
 			<body>{children}</body>
 		</html>
 	);
